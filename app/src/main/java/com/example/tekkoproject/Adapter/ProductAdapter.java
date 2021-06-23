@@ -2,9 +2,12 @@ package com.example.tekkoproject.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,11 +25,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHolder> implements Filterable {
     Context context; //màn hình mà muốn đổ vào
     List<Product> arrayList;
+    List<Product> arrayListFilter;
 
-    public void setData(List<Product> list){
+    public void setData(List<Product> list) {
         this.arrayList = list;
         notifyDataSetChanged();
     }
@@ -43,6 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHold
     public ProductAdapter(Context context, List<Product> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
+        this.arrayListFilter = arrayList;
     }
 
     @Override
@@ -50,11 +55,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHold
         Product product = arrayList.get(position);
         holder.tvNameProduct.setText(product.getName());
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
-        holder.tvPriceProduct.setText(String.valueOf(decimalFormat.format(product.getPrice()))+"Đ");
+        holder.tvPriceProduct.setText(String.valueOf(decimalFormat.format(product.getPrice())) + "Đ");
         Picasso.with(context).load(product.getImg()).placeholder(R.drawable.warning).into(holder.imgProduct);
         holder.parentLayout.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
-            intent.putExtra("detail", arrayList.get(position));
+            intent.putExtra("thongtinsp", arrayList.get(position));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         });
@@ -65,7 +70,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHold
         return arrayList.size();
     }
 
-    public class ItemHolder extends RecyclerView.ViewHolder{
+
+    public class ItemHolder extends RecyclerView.ViewHolder {
 
         ImageView imgProduct;
         TextView tvNameProduct, tvPriceProduct;
@@ -80,10 +86,40 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHold
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String strSearch = constraint.toString();
+                Log.d("search", strSearch);
+                //trường hợp không search gì sẽ để nguyên list
+                List<Product> listFilterd = new ArrayList<>();
+                if (strSearch.isEmpty()) {
+                    listFilterd = arrayListFilter;
+                } else {
+                    for (Product product : arrayListFilter) {
+                        if (product.getName().toLowerCase().contains(strSearch.toLowerCase()) ||
+                                product.getBrand().toLowerCase().contains(strSearch.toLowerCase())) {
+                            listFilterd.add(product);
+                        }
+                    }
+                    Log.d("tag", listFilterd.size() + "");
+                }
 
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = listFilterd;
+                return filterResults;
+            }
 
-
-
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                arrayList = (ArrayList<Product>) results.values;
+                notifyDataSetChanged();
+                Log.d("publishResults", "publishResults");
+            }
+        };
+    }
 
 
 }

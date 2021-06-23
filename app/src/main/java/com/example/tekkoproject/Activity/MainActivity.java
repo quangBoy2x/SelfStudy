@@ -3,6 +3,7 @@ package com.example.tekkoproject.Activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -50,11 +53,13 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    androidx.appcompat.widget.SearchView searchView;
+
     RecyclerView recyclerView;
     ImageView btnBack;
     Context context;
-    List<Product> products;
+    androidx.appcompat.widget.SearchView searchView;
+    public static List<Product> products;
+    RecyclerView.ItemDecoration itemDecoration;
     ProductAdapter productAdapter;
 
 
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,"Internet connected, your products will be newest", Toast.LENGTH_SHORT).show();
             //todo load dữ liệu từ api mới nhất
             GetData();
+
         }
         else{
             Toast.makeText(this,"no internet, retry connect to update your products", Toast.LENGTH_SHORT).show();
@@ -82,6 +88,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),1));
         recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(itemDecoration);
+        //xử lí khi tìm kiếm sản phẩm
+
 
 
 
@@ -91,13 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void Map(){
         products = new ArrayList<>();
-        searchView = (androidx.appcompat.widget.SearchView) findViewById(R.id.searchBar);
         recyclerView = (RecyclerView) findViewById(R.id.lvProducts);
-        btnBack = (ImageView) findViewById(R.id.btnBack);
-
 
         productAdapter = new ProductAdapter(getApplicationContext(), products);
         productAdapter.setData(products);
+        //thêm dòng kẻ để phân cách các item
+        itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
 //        mydb = new DataBaseHelper(this);
 
 
@@ -178,6 +186,56 @@ public class MainActivity extends AppCompatActivity {
         return product!=null && !products.isEmpty();
     }
 
+    //xử lí khi searchbar đang expand thì user backPress thì thu lại searchbar
+    //rồi mới thoát hẳn
+    @Override
+    public void onBackPressed() {
+        if(!searchView.isIconified()){
+            searchView.setIconified(true);
+            return;
+        }
+        super.onBackPressed();
+    }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                productAdapter.getFilter().filter(query);
+                Log.d("query", query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                productAdapter.getFilter().filter(newText);
+                Log.d("querychange", newText);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_search) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
