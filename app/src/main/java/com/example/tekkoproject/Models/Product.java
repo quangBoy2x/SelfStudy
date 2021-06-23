@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
+//lớp sản phẩm
 @Entity(tableName = "PRODUCTS")
 public class Product implements Serializable {
     @PrimaryKey

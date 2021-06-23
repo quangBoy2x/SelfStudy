@@ -1,5 +1,6 @@
 package com.example.tekkoproject.Models;
 
+//lớp giỏ hàng
 public class Cart {
     int id;
     String tensp;

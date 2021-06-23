@@ -85,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+        //xử lí recycleView
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(),1));
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(itemDecoration);
-        //xử lí khi tìm kiếm sản phẩm
 
 
 
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    //hàm ánh xạ
     private void Map(){
         products = new ArrayList<>();
         recyclerView = (RecyclerView) findViewById(R.id.lvProducts);
@@ -106,16 +107,15 @@ public class MainActivity extends AppCompatActivity {
         productAdapter.setData(products);
         //thêm dòng kẻ để phân cách các item
         itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-//        mydb = new DataBaseHelper(this);
-
 
     }
-
+    //kiểm tra kết nối INTERNET CÓ HAY KHÔNG CÓ
     public boolean isConnected(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo()!=null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
+    //hàm đọc data từ api
     private void GetData(){
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -175,12 +175,12 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-
+    //hàm thêm các sản phẩm vào sqlite
     private void addProducts(int ID, String TenSP, String HinhAnhSp, String dateAdded, String dateUpdated, int GiaSp, String brand, String code){
         Product product = new Product(ID, TenSP, HinhAnhSp, dateAdded, dateUpdated, GiaSp, brand, code);
         ProductDataBase.getInstance(this).productDAO().insertProduct(product);
     }
-
+    //hàm keierm tra sản phẩm có tồn tại trong sqlite hay không
     private boolean isProductExist(Product product){
         List<Product> products = ProductDataBase.getInstance(this).productDAO().checkProduct(product.getId());
         return product!=null && !products.isEmpty();
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-
+    //hàm gọi menu và xử lí khi chọn search
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -210,14 +210,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 productAdapter.getFilter().filter(query);
-                Log.d("query", query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 productAdapter.getFilter().filter(newText);
-                Log.d("querychange", newText);
                 return false;
             }
         });

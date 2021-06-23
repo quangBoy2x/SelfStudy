@@ -9,6 +9,7 @@ import com.example.tekkoproject.Models.Product;
 import java.util.ArrayList;
 import java.util.List;
 
+//DAO TRONG ROOM Android xử lí sqlite
 @Dao
 public interface ProductDAO {
     @Insert

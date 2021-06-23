@@ -17,7 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.List;
-
+//hàm apdater của sản phẩm trong recycleview của DetailActivity
 public class Recycleviewadapter extends RecyclerView.Adapter<Recycleviewadapter.ViewHolder> {
     Context context; //màn hình mà muốn đổ vào
     List<Product> products;

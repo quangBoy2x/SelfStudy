@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+//hàm apdater của sản phẩm trong recycleview của MainActivity
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ItemHolder> implements Filterable {
     Context context; //màn hình mà muốn đổ vào
     List<Product> arrayList;

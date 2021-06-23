@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+//xử lí activity chi tiết sản phẩm
 public class DetailActivity extends AppCompatActivity {
     TextView tvNameHead, tvNameBody, tvPriceHead, tvPriceBody, tvTotalPrice, tvTotalQuantity, tvCode, tvQuantityCart;
     String img="", name="", code="";
@@ -37,7 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     Recycleviewadapter recycleviewadapter;
 
-
+    //hàm kiểm tra internet
     public boolean isConnected(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo()!=null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
@@ -51,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
         AddItem();
         SubtractItem();
         addToCart();
-        Log.d("current", String.valueOf(totalCart));
+        //làm cho recycleview lướt ngang
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -77,7 +78,7 @@ public class DetailActivity extends AppCompatActivity {
         }
 
     }
-
+    //hàm xủ lí khi nhấn nút + sẽ tăng số lượng sp và đặt lại tổng giá tiền
     private void AddItem() {
         btnPlus.setOnClickListener(v -> {
             quantities++;
@@ -89,7 +90,7 @@ public class DetailActivity extends AppCompatActivity {
 
 
     }
-
+    //hàm xủ lí khi nhấn nút - sẽ tăng số lượng sp và đặt lại tổng giá tiền
     private void SubtractItem() {
         btnMinus.setOnClickListener(v -> {
             if(quantities>0){
@@ -102,7 +103,7 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
-
+    //hàm nhấn nút mua hàng thì sẽ toast lên đã thêm giỏ hàng
     private void addToCart(){
         btnAddToCart.setOnClickListener(v -> {
 //            int id, String tensp
@@ -111,7 +112,7 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
-
+    //hàm lấy thông tin sản phẩm
     private void GetInforProduct() {
         Product product =(Product) getIntent().getSerializableExtra("thongtinsp");
         productcurrent = product;
@@ -128,7 +129,7 @@ public class DetailActivity extends AppCompatActivity {
         tvPriceBody.setText(String.valueOf(decimalFormat.format(price)) + "Đ");
         Picasso.with(getApplicationContext()).load(img).placeholder(R.drawable.warning).error(R.drawable.warning).into(imgProduct);
     }
-
+    //hàm ánh xạ
     private void Map(){
         tvCode = (TextView) findViewById(R.id.tvDetailCode);
         tvNameBody = (TextView) findViewById(R.id.tvDetailNameBody);

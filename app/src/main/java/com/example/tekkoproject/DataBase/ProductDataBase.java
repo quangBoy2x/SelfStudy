@@ -7,7 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.tekkoproject.Models.Product;
-
+//DATABASE TRONG ROOM XỬ LÍ SQLITE
 @Database(entities = {Product.class}, version = 1)
 public abstract class ProductDataBase extends RoomDatabase {
     private static final String DATABASE_NAME = "product.db";
